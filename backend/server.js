@@ -6,7 +6,17 @@ require('dotenv').config();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: [
+        'http://localhost:5173',   // frontend dev
+        'http://localhost:5174',   // admin dev (Vite uses 5174 if 5173 is taken)
+        'http://localhost:4173',   // vite preview
+        /\.onrender\.com$/,        // any Render-hosted frontend
+        /\.vercel\.app$/,          // Vercel deployments
+        /\.netlify\.app$/,         // Netlify deployments
+    ],
+    credentials: true,
+}));
 app.use(express.json());
 
 const analyzeRoutes = require('./routes/analyze');

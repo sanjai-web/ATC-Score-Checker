@@ -92,7 +92,7 @@ export default function Dashboard() {
       Object.entries(fields).forEach(([k, v]) => { if (v) fd.append(k, v); });
 
       setStatusText('Analyzing with AI (this may take 10–20 seconds)...');
-      const { data } = await axios.post('http://localhost:5000/api/analyze', fd);
+      const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/api/analyze`, fd);
 
       setStatusText('Saving your results...');
       // Guaranteed mobile fetch at save time — handles race condition
@@ -118,7 +118,7 @@ export default function Dashboard() {
       setTab('results');
     } catch(err) {
       console.error(err);
-      alert('Analysis failed. Please make sure the backend server is running at http://localhost:5000');
+      alert(`Analysis failed. Please make sure the backend is reachable at ${import.meta.env.VITE_API_URL}`);
     }
     setLoading(false); setStatusText('');
   };

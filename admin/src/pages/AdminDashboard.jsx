@@ -869,7 +869,7 @@ export default function AdminDashboard() {
                             <td>
                               {r.fileUrl ? (
                                 <a
-                                  href={`http://localhost:5000/api/pdf-proxy?url=${encodeURIComponent(r.fileUrl)}`}
+                                  href={`${import.meta.env.VITE_API_URL}/api/pdf-proxy?url=${encodeURIComponent(r.fileUrl)}`}
                                   target="_blank"
                                   rel="noreferrer"
                                   className="btn btn-ghost btn-sm"
