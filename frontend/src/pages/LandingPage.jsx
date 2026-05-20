@@ -1,173 +1,220 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// TechVedhu Bird Logo SVG
-const TechVedhuLogo = ({ size = 36 }) => (
-  <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M20 4C20 4 8 10 8 22C8 28 12 33 18 35L20 28L22 35C28 33 32 28 32 22C32 10 20 4 20 4Z" fill="white" opacity="0.9"/>
-    <path d="M20 4C20 4 14 14 16 22L20 18L24 22C26 14 20 4 20 4Z" fill="white"/>
-    <circle cx="17" cy="14" r="1.5" fill="#1a3b82"/>
-  </svg>
+const Logo = ({ size = 36 }) => (
+  <div style={{ width: size, height: size, borderRadius: 10, background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 20px rgba(99,102,241,0.4)', flexShrink: 0 }}>
+    <svg width={size * 0.6} height={size * 0.6} viewBox="0 0 24 24" fill="none">
+      <path d="M12 2L4 7v5c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V7L12 2z" fill="white" opacity="0.9"/>
+      <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  </div>
 );
 
 const features = [
-  { icon: '📊', title: 'ATS Score Analysis', desc: 'Get an accurate compatibility score that tells you exactly how a recruiter\'s ATS will rank your resume.' },
-  { icon: '🎯', title: 'Keyword Matching', desc: 'Instantly identify missing keywords from any job description. Know exactly what to add.' },
-  { icon: '🤖', title: 'AI-Powered Suggestions', desc: 'Receive specific, actionable rewrites powered by Groq AI to strengthen every section.' },
-  { icon: '📁', title: 'Resume History', desc: 'Track your score improvements across multiple uploads and see how your resume evolves.' },
-  { icon: '📂', title: 'Section-by-Section Feedback', desc: 'Education, Experience, Skills, and Projects — reviewed and rated individually.' },
-  { icon: '💡', title: 'Role Recommendations', desc: 'Discover which job titles best match your current resume profile.' },
+  { icon: '📊', title: 'ATS Score Analysis', desc: 'Get an accurate compatibility score showing exactly how recruiters\' ATS systems rank your resume.', color: '#6366f1' },
+  { icon: '🎯', title: 'Keyword Matching', desc: 'Instantly identify every missing keyword from any job description. Know exactly what to add.', color: '#8b5cf6' },
+  { icon: '🤖', title: 'AI-Powered Rewrites', desc: 'Receive specific, actionable rewrites powered by Groq AI to strengthen every resume section.', color: '#06b6d4' },
+  { icon: '📁', title: 'Resume History', desc: 'Track score improvements across multiple uploads. See your resume evolution over time.', color: '#10b981' },
+  { icon: '📂', title: 'Section Feedback', desc: 'Education, Experience, Skills, Projects — each section individually reviewed and rated.', color: '#f59e0b' },
+  { icon: '💡', title: 'Role Recommendations', desc: 'Discover which job titles best match your current resume profile and skills.', color: '#f43f5e' },
 ];
 
 const steps = [
-  { num: '01', title: 'Upload Your Resume', desc: 'Drag and drop your PDF or click to browse. It takes under 5 seconds.' },
-  { num: '02', title: 'Add a Job Description', desc: 'Paste a target job posting to get keyword-matched, role-specific analysis.' },
-  { num: '03', title: 'Get Your ATS Report', desc: 'Receive a detailed score, missing keywords, and prioritized suggestions instantly.' },
+  { num: '01', title: 'Upload Resume', desc: 'Drag and drop your PDF. It takes under 5 seconds to upload.', icon: '📤' },
+  { num: '02', title: 'Add Job Description', desc: 'Paste any job posting for keyword-matched, role-specific analysis.', icon: '📋' },
+  { num: '03', title: 'Get Your Report', desc: 'Receive score, missing keywords, and AI suggestions instantly.', icon: '⚡' },
 ];
 
 const testimonials = [
-  { name: 'Priya Sharma', role: 'Software Engineer at Infosys', text: 'My ATS score went from 48% to 82% in two revisions. I got 3 interview calls in the same week.', avatar: 'P' },
-  { name: 'Arjun Mehta', role: 'Data Analyst at TCS', text: 'The keyword matching feature is incredible. It showed me exactly what was missing for each role I applied to.', avatar: 'A' },
-  { name: 'Sneha Reddy', role: 'Product Manager at Wipro', text: 'The section-by-section breakdown is something no other free tool offers. Genuinely impressed.', avatar: 'S' },
+  { name: 'Priya Sharma', role: 'Software Engineer · Infosys', text: 'My ATS score went from 48% to 82% in two revisions. I got 3 interview calls the same week!', avatar: 'P', score: '+34%' },
+  { name: 'Arjun Mehta', role: 'Data Analyst · TCS', text: 'The keyword matching is incredible. It showed me exactly what was missing for each role.', avatar: 'A', score: '+28%' },
+  { name: 'Sneha Reddy', role: 'Product Manager · Wipro', text: 'Section-by-section breakdown is something no other free tool offers. Genuinely impressed.', avatar: 'S', score: '+41%' },
 ];
+
+function AnimatedCounter({ target, suffix = '' }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) {
+        let start = 0;
+        const inc = target / 60;
+        const timer = setInterval(() => {
+          start += inc;
+          if (start >= target) { setCount(target); clearInterval(timer); }
+          else setCount(Math.floor(start));
+        }, 20);
+      }
+    }, { threshold: 0.5 });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, [target]);
+  return <span ref={ref}>{count}{suffix}</span>;
+}
 
 export default function LandingPage() {
   const navigate = useNavigate();
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const fn = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', fn, { passive: true });
-    return () => window.removeEventListener('scroll', fn);
-  }, []);
+  const [activeFeature, setActiveFeature] = useState(null);
 
   return (
-    <div style={{ background: 'var(--white)', color: 'var(--text-1)' }}>
+    <div style={{ background: 'var(--bg)', color: 'var(--text-1)' }}>
 
-      {/* ─── Navbar ─── */}
-      <header className="navbar">
+      {/* ── Navbar ── */}
+      <header style={{ position: 'sticky', top: 0, zIndex: 999, height: 68, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(20px)', borderBottom: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)', display: 'flex', alignItems: 'center' }}>
         <div className="container navbar-inner">
-          <div className="navbar-logo">
-            <div className="navbar-logo-icon">
-              <TechVedhuLogo size={36} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Logo size={38} />
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '1rem', letterSpacing: '0.04em', color: 'var(--text-1)' }}>TECH VEDHU</div>
+              <div style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--accent)', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: -2 }}>ATS Checker</div>
             </div>
-            <span style={{ color: 'white', fontWeight: 800, fontSize: '1.05rem', letterSpacing: '0.02em' }}>
-              TECH VEDHU <span style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 500, fontSize: '0.85rem' }}>ATS</span>
-            </span>
           </div>
-          <nav style={{ display: 'flex', alignItems: 'center', gap: 28 }}>
-            <a href="#features" style={{ fontSize: '0.875rem', fontWeight: 500, color: 'rgba(255,255,255,0.85)', transition: 'color 0.15s' }} onMouseEnter={e => e.target.style.color='white'} onMouseLeave={e => e.target.style.color='rgba(255,255,255,0.85)'}>Features</a>
-            <a href="#how-it-works" style={{ fontSize: '0.875rem', fontWeight: 500, color: 'rgba(255,255,255,0.85)', transition: 'color 0.15s' }} onMouseEnter={e => e.target.style.color='white'} onMouseLeave={e => e.target.style.color='rgba(255,255,255,0.85)'}>How it works</a>
+          <nav style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+            {[['#features','Features'],['#how-it-works','How it works'],['#testimonials','Reviews']].map(([href, label]) => (
+              <a key={href} href={href} style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--text-3)', transition: 'color 0.2s' }}
+                onMouseEnter={e => e.target.style.color = 'var(--text-1)'} onMouseLeave={e => e.target.style.color = 'var(--text-3)'}>{label}</a>
+            ))}
           </nav>
-          <div className="navbar-actions">
-            <button className="btn-outline-white" onClick={() => navigate('/login')}>Log in</button>
-            <button className="btn btn-sm" style={{ background: 'white', color: 'var(--navy)', fontWeight: 700 }} onClick={() => navigate('/signup')}>Get Started</button>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button className="btn-outline-white" onClick={() => navigate('/login')}>Sign in</button>
+            <button className="btn btn-primary btn-sm" onClick={() => navigate('/signup')}>Get Started Free</button>
           </div>
         </div>
       </header>
 
-      {/* ─── Hero ─── */}
-      <section style={{ padding: '80px 0 96px', background: 'var(--white)', borderBottom: '1px solid var(--border)' }}>
-        <div className="container" style={{ textAlign: 'center', maxWidth: 760, marginInline: 'auto' }}>
+      {/* ── Hero ── */}
+      <section style={{ position: 'relative', padding: '120px 0 100px', overflow: 'hidden' }}>
+        {/* Orbs */}
+        <div className="hero-orb" style={{ width: 600, height: 600, background: '#6366f1', top: -200, left: -100 }} />
+        <div className="hero-orb" style={{ width: 400, height: 400, background: '#8b5cf6', bottom: -100, right: -50 }} />
+        <div className="hero-orb" style={{ width: 300, height: 300, background: '#06b6d4', top: 100, right: '25%', opacity: 0.2 }} />
+
+        <div className="container" style={{ position: 'relative', textAlign: 'center', maxWidth: 800, marginInline: 'auto' }}>
           <div className="section-pill anim-fade-up">✦ Free for everyone — no credit card required</div>
-          <h1 className="t-hero anim-fade-up-1" style={{ marginBottom: 20 }}>
-            Is Your Resume<br />
-            <span style={{ color: 'var(--accent)' }}>Passing the ATS?</span>
+
+          <h1 className="t-hero anim-fade-up-1" style={{ marginBottom: 24 }}>
+            Is Your Resume <br />
+            <span className="t-gradient">Passing the ATS?</span>
           </h1>
-          <p className="t-body anim-fade-up-2" style={{ fontSize: '1.1rem', maxWidth: 580, margin: '0 auto 40px', color: 'var(--text-2)' }}>
+
+          <p className="anim-fade-up-2" style={{ fontSize: '1.15rem', color: 'var(--text-2)', maxWidth: 560, margin: '0 auto 44px', lineHeight: 1.75 }}>
             Upload your resume and get an instant ATS compatibility score, keyword gap analysis, and AI-powered improvement suggestions — in under 30 seconds.
           </p>
-          <div className="anim-fade-up-3" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+
+          <div className="anim-fade-up-3" style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
             <button className="btn btn-primary btn-xl" onClick={() => navigate('/signup')}>
-              Analyze My Resume Free →
+              ⚡ Analyze My Resume Free
             </button>
             <button className="btn btn-secondary btn-xl" onClick={() => navigate('/login')}>
-              Sign in
+              Sign in to Dashboard
             </button>
           </div>
-          <p className="anim-fade-up-4" style={{ fontSize: '0.78rem', color: 'var(--text-4)', marginTop: 16 }}>
-            PDF format only · Secured with Firebase · Results in &lt;30 seconds
-          </p>
+
+          <div className="anim-fade-up-4" style={{ display: 'flex', justifyContent: 'center', gap: 24, fontSize: '0.8rem', color: 'var(--text-3)' }}>
+            {['✓ PDF format only', '✓ Firebase secured', '✓ Results in &lt;30s', '✓ No credit card'].map((t, i) => (
+              <span key={i} dangerouslySetInnerHTML={{ __html: t }} />
+            ))}
+          </div>
         </div>
 
-        {/* Hero visual */}
-        <div className="container anim-fade-up-4" style={{ marginTop: 64, maxWidth: 860 }}>
-          <div className="card" style={{ padding: 0, overflow: 'hidden', boxShadow: 'var(--shadow-xl)', border: '1px solid var(--border)' }}>
-            <div style={{ background: 'var(--navy)', padding: '12px 18px', display: 'flex', alignItems: 'center', gap: 8 }}>
-              {['#f87171','#fbbf24','#34d399'].map((c,i) => <div key={i} style={{ width: 12, height: 12, borderRadius: '50%', background: c }} />)}
-              <div style={{ flex: 1, textAlign: 'center', fontSize: '0.78rem', fontWeight: 600, color: 'rgba(255,255,255,0.7)' }}>Tech Vedhu ATS — Dashboard</div>
+        {/* Hero Preview Card */}
+        <div className="container anim-fade-up-4" style={{ marginTop: 72, maxWidth: 900, position: 'relative' }}>
+          <div style={{ borderRadius: 20, overflow: 'hidden', border: '1px solid var(--glass-border)', boxShadow: '0 32px 80px rgba(0,0,0,0.6), 0 0 60px rgba(99,102,241,0.2)' }}>
+            {/* Window bar */}
+            <div style={{ background: 'var(--bg-2)', padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 8, borderBottom: '1px solid var(--border)' }}>
+              {['#f43f5e','#f59e0b','#10b981'].map((c, i) => <div key={i} style={{ width: 12, height: 12, borderRadius: '50%', background: c }} />)}
+              <div style={{ flex: 1, textAlign: 'center', fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-3)' }}>Tech Vedhu ATS — Dashboard Preview</div>
             </div>
-            <div style={{ padding: 32, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20, background: 'var(--bg)' }}>
+            {/* Scores Grid */}
+            <div style={{ padding: 32, background: 'var(--bg)', display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
               {[
-                { label: 'ATS Score', value: 84, color: '#059669' },
-                { label: 'Keyword Match', value: 71, color: 'var(--accent)' },
-                { label: 'Readability', value: 91, color: 'var(--navy)' },
+                { label: 'ATS Score', value: 84, color: '#10b981', icon: '🏆' },
+                { label: 'Keyword Match', value: 71, color: '#6366f1', icon: '🎯' },
+                { label: 'Readability', value: 91, color: '#06b6d4', icon: '📖' },
               ].map((s, i) => (
-                <div key={i} style={{ textAlign: 'center', padding: '20px 16px', background: 'var(--white)', borderRadius: 12, border: '1px solid var(--border)' }}>
-                  <div style={{ fontSize: '2.4rem', fontWeight: 900, color: s.color }}>{s.value}%</div>
-                  <div style={{ fontSize: '0.78rem', color: 'var(--text-3)', fontWeight: 600, marginTop: 4 }}>{s.label}</div>
-                  <div className="progress" style={{ marginTop: 10 }}>
+                <div key={i} style={{ textAlign: 'center', padding: '24px 16px', background: 'var(--card)', borderRadius: 14, border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}>
+                  <div style={{ fontSize: '1.4rem', marginBottom: 8 }}>{s.icon}</div>
+                  <div style={{ fontSize: '2.6rem', fontWeight: 900, color: s.color, lineHeight: 1 }}>{s.value}%</div>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-3)', fontWeight: 600, marginTop: 6 }}>{s.label}</div>
+                  <div className="progress" style={{ marginTop: 12 }}>
                     <div className="progress-fill" style={{ width: `${s.value}%`, background: s.color }} />
                   </div>
                 </div>
               ))}
             </div>
+            {/* Missing keywords preview */}
+            <div style={{ padding: '16px 32px 24px', background: 'var(--bg-2)', borderTop: '1px solid var(--border)' }}>
+              <div style={{ fontSize: '0.72rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-4)', marginBottom: 10 }}>Missing Keywords Detected</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {['React.js', 'TypeScript', 'REST APIs', 'Docker', 'Agile', 'CI/CD'].map(kw => (
+                  <span key={kw} className="skill-tag">{kw}</span>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ─── Stats ─── */}
-      <section style={{ padding: '52px 0', background: 'var(--bg)', borderBottom: '1px solid var(--border)' }}>
-        <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px,1fr))', gap: 0 }}>
+      {/* ── Stats ── */}
+      <section style={{ padding: '60px 0', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+        <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0 }}>
           {[
-            { value: '50,000+', label: 'Resumes Analyzed' },
-            { value: '98%', label: 'ATS Accuracy Rate' },
-            { value: '3×', label: 'More Interview Calls' },
-            { value: '< 30s', label: 'Average Analysis Time' },
+            { value: 50, suffix: '+', label: 'Resumes Analyzed' },
+            { value: 98, suffix: '%', label: 'ATS Accuracy Rate' },
+            { value: 3, suffix: '×', label: 'More Interview Calls' },
+            { value: 30, suffix: 's', label: 'Average Analysis Time' },
           ].map((s, i) => (
-            <div key={i} style={{ textAlign: 'center', padding: '20px 16px', borderRight: i < 3 ? '1px solid var(--border)' : 'none' }}>
-              <div style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--navy)', letterSpacing: '-0.03em' }}>{s.value}</div>
-              <div style={{ fontSize: '0.82rem', color: 'var(--text-3)', marginTop: 4, fontWeight: 500 }}>{s.label}</div>
+            <div key={i} style={{ textAlign: 'center', padding: '24px', borderRight: i < 3 ? '1px solid var(--border)' : 'none' }}>
+              <div className="t-gradient" style={{ fontSize: '2.4rem', fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 1 }}>
+                <AnimatedCounter target={s.value} suffix={s.suffix} />
+              </div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-3)', marginTop: 8, fontWeight: 500 }}>{s.label}</div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ─── Features ─── */}
-      <section className="section" id="features" style={{ background: 'var(--white)' }}>
+      {/* ── Features ── */}
+      <section className="section" id="features">
         <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: 56 }}>
-            <div className="section-pill anim-fade-up">Everything you need</div>
-            <h2 className="t-h1 anim-fade-up-1" style={{ marginBottom: 12 }}>A complete resume analysis toolkit</h2>
-            <p className="t-body anim-fade-up-2" style={{ maxWidth: 480, marginInline: 'auto' }}>
-              Every tool you need to turn a weak resume into one that passes ATS filters and impresses recruiters.
-            </p>
+          <div style={{ textAlign: 'center', marginBottom: 64 }}>
+            <div className="section-pill">Everything you need</div>
+            <h2 className="t-h1" style={{ marginBottom: 14 }}>A complete resume <span className="t-gradient">analysis toolkit</span></h2>
+            <p className="t-body" style={{ maxWidth: 480, marginInline: 'auto' }}>Every tool you need to turn a weak resume into one that passes ATS filters and impresses recruiters.</p>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px,1fr))', gap: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 20 }}>
             {features.map((f, i) => (
-              <div key={i} className="card card-lift" style={{ padding: '28px 28px 32px' }}>
-                <div style={{ width: 48, height: 48, borderRadius: 12, background: 'var(--accent-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', marginBottom: 16 }}>{f.icon}</div>
-                <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: 8, color: 'var(--navy)' }}>{f.title}</h3>
+              <div key={i} className="card card-lift"
+                style={{ padding: '28px', cursor: 'default', background: activeFeature === i ? 'var(--card-hover)' : 'var(--card)' }}
+                onMouseEnter={() => setActiveFeature(i)} onMouseLeave={() => setActiveFeature(null)}>
+                <div className="feat-icon" style={{ background: `${f.color}18`, borderColor: `${f.color}30` }}>
+                  <span style={{ fontSize: '1.4rem' }}>{f.icon}</span>
+                </div>
+                <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: 8 }}>{f.title}</h3>
                 <p style={{ fontSize: '0.875rem', color: 'var(--text-3)', lineHeight: 1.7, margin: 0 }}>{f.desc}</p>
+                <div style={{ marginTop: 18, width: 32, height: 3, borderRadius: 2, background: f.color, transition: 'width 0.3s', ...(activeFeature === i ? { width: 64 } : {}) }} />
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── How It Works ─── */}
-      <section className="section" id="how-it-works" style={{ background: 'var(--bg)' }}>
+      {/* ── How It Works ── */}
+      <section className="section" id="how-it-works" style={{ background: 'var(--bg-2)' }}>
         <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+          <div style={{ textAlign: 'center', marginBottom: 64 }}>
             <div className="section-pill">Simple process</div>
-            <h2 className="t-h1" style={{ marginBottom: 12 }}>Get results in 3 steps</h2>
+            <h2 className="t-h1" style={{ marginBottom: 14 }}>Get results in <span className="t-gradient">3 steps</span></h2>
             <p className="t-body" style={{ maxWidth: 420, marginInline: 'auto' }}>No complicated setup. No learning curve. Just upload and go.</p>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px,1fr))', gap: 24 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 24, position: 'relative' }}>
             {steps.map((s, i) => (
-              <div key={i} className="card" style={{ padding: 32 }}>
-                <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--navy)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 14, background: 'var(--accent-light)', padding: '4px 10px', borderRadius: 6, display: 'inline-block' }}>{s.num}</div>
-                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: 10, color: 'var(--navy)' }}>{s.title}</h3>
+              <div key={i} className="card" style={{ padding: 36, textAlign: 'center' }}>
+                <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--gradient)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '1.8rem', boxShadow: 'var(--shadow-glow-sm)' }}>
+                  {s.icon}
+                </div>
+                <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--accent)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 10 }}>{s.num}</div>
+                <h3 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: 10 }}>{s.title}</h3>
                 <p style={{ fontSize: '0.875rem', color: 'var(--text-3)', lineHeight: 1.7, margin: 0 }}>{s.desc}</p>
               </div>
             ))}
@@ -175,22 +222,28 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ─── Testimonials ─── */}
-      <section className="section" style={{ background: 'var(--white)' }}>
+      {/* ── Testimonials ── */}
+      <section className="section" id="testimonials">
         <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: 52 }}>
+          <div style={{ textAlign: 'center', marginBottom: 64 }}>
             <div className="section-pill">Success stories</div>
-            <h2 className="t-h1" style={{ marginBottom: 12 }}>People are getting hired</h2>
+            <h2 className="t-h1" style={{ marginBottom: 14 }}>People are <span className="t-gradient">getting hired</span></h2>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px,1fr))', gap: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 20 }}>
             {testimonials.map((t, i) => (
-              <div key={i} className="card" style={{ padding: 28 }}>
-                <p style={{ fontSize: '0.9rem', color: 'var(--text-2)', lineHeight: 1.7, marginBottom: 24, fontStyle: 'italic' }}>"{t.text}"</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--navy)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1rem', flexShrink: 0 }}>{t.avatar}</div>
+              <div key={i} className="card card-lift" style={{ padding: 32 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    {[...Array(5)].map((_, j) => <span key={j} style={{ color: '#f59e0b', fontSize: '0.9rem' }}>★</span>)}
+                  </div>
+                  <span className="badge badge-success" style={{ fontSize: '0.82rem' }}>{t.score}</span>
+                </div>
+                <p style={{ fontSize: '0.9rem', color: 'var(--text-2)', lineHeight: 1.75, marginBottom: 24, fontStyle: 'italic' }}>"{t.text}"</p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingTop: 20, borderTop: '1px solid var(--border)' }}>
+                  <div style={{ width: 42, height: 42, borderRadius: '50%', background: 'var(--gradient)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1rem', boxShadow: 'var(--shadow-glow-sm)', flexShrink: 0 }}>{t.avatar}</div>
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--navy)' }}>{t.name}</div>
-                    <div style={{ fontSize: '0.78rem', color: 'var(--text-3)' }}>{t.role}</div>
+                    <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{t.name}</div>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--text-4)' }}>{t.role}</div>
                   </div>
                 </div>
               </div>
@@ -199,30 +252,36 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ─── CTA ─── */}
-      <section style={{ padding: '80px 0', background: 'var(--navy)' }}>
-        <div className="container" style={{ textAlign: 'center', maxWidth: 600 }}>
-          <h2 style={{ fontSize: 'clamp(1.8rem,4vw,2.6rem)', fontWeight: 900, color: 'white', marginBottom: 14, letterSpacing: '-0.025em' }}>
-            Your next interview starts here
+      {/* ── CTA ── */}
+      <section style={{ padding: '96px 0', position: 'relative', overflow: 'hidden' }}>
+        <div className="hero-orb" style={{ width: 500, height: 500, background: '#6366f1', top: -150, left: '30%', opacity: 0.25 }} />
+        <div className="container" style={{ position: 'relative', textAlign: 'center', maxWidth: 640 }}>
+          <h2 className="t-h1" style={{ marginBottom: 18, fontSize: 'clamp(1.8rem,4vw,2.8rem)' }}>
+            Your next interview <span className="t-gradient">starts here</span>
           </h2>
-          <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1rem', marginBottom: 36, lineHeight: 1.7 }}>
+          <p style={{ color: 'var(--text-3)', fontSize: '1.05rem', marginBottom: 40, lineHeight: 1.75 }}>
             Join thousands of job seekers who've used Tech Vedhu ATS to land more interviews and better jobs.
           </p>
-          <button className="btn btn-xl" style={{ background: 'white', color: 'var(--navy)', fontWeight: 800 }} onClick={() => navigate('/signup')}>
-            Get Started Free — It's Instant →
-          </button>
+          <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button className="btn btn-primary btn-xl" onClick={() => navigate('/signup')}>
+              Get Started Free — It's Instant →
+            </button>
+            <button className="btn btn-secondary btn-xl" onClick={() => navigate('/login')}>
+              Already a member?
+            </button>
+          </div>
         </div>
       </section>
 
-      {/* ─── Footer ─── */}
-      <footer style={{ background: 'var(--navy-dark)', padding: '28px 0' }}>
-        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <TechVedhuLogo size={28} />
-            <span style={{ color: 'white', fontWeight: 800, fontSize: '0.95rem', letterSpacing: '0.02em' }}>TECH VEDHU ATS</span>
+      {/* ── Footer ── */}
+      <footer style={{ background: 'var(--bg-2)', borderTop: '1px solid var(--border)', padding: '32px 0' }}>
+        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Logo size={32} />
+            <span style={{ fontWeight: 800, fontSize: '0.95rem', letterSpacing: '0.04em', color: 'var(--text-1)' }}>TECH VEDHU ATS</span>
           </div>
-          <p style={{ fontSize: '0.8125rem', color: 'rgba(255,255,255,0.5)' }}>© {new Date().getFullYear()} Tech Vedhu. All rights reserved.</p>
-          <a href="https://techvedhu.com" target="_blank" rel="noreferrer" style={{ fontSize: '0.8125rem', color: 'rgba(255,255,255,0.6)', textDecoration: 'underline' }}>techvedhu.com</a>
+          <p style={{ fontSize: '0.8rem', color: 'var(--text-4)' }}>© {new Date().getFullYear()} Tech Vedhu. All rights reserved.</p>
+          <a href="https://techvedhu.com" target="_blank" rel="noreferrer" style={{ fontSize: '0.8rem', color: 'var(--accent-hover)', textDecoration: 'underline' }}>techvedhu.com</a>
         </div>
       </footer>
     </div>

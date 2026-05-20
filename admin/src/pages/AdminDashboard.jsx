@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { db } from "../firebase";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { databases, DB_ID, USERS_COL, RESUMES_COL, Query } from "../appwrite";
 import {
   BarChart,
   Bar,
@@ -93,12 +92,16 @@ export default function AdminDashboard() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [uSnap, rSnap] = await Promise.all([
-        getDocs(query(collection(db, "users"), orderBy("createdAt", "desc"))),
-        getDocs(query(collection(db, "resumes"), orderBy("createdAt", "desc"))),
+      const [uRes, rRes] = await Promise.all([
+        databases.listDocuments(DB_ID, USERS_COL,   [Query.orderDesc('createdAt'), Query.limit(500)]),
+        databases.listDocuments(DB_ID, RESUMES_COL, [Query.orderDesc('createdAt'), Query.limit(500)]),
       ]);
-      setUsers(uSnap.docs.map((d) => ({ id: d.id, ...d.data() })));
-      setResumes(rSnap.docs.map((d) => ({ id: d.id, ...d.data() })));
+      setUsers(uRes.documents.map(d => ({ id: d.$id, ...d })));
+      // Parse atsData JSON string for each resume
+      setResumes(rRes.documents.map(d => ({
+        id: d.$id, ...d,
+        atsData: typeof d.atsData === 'string' ? (() => { try { return JSON.parse(d.atsData); } catch { return {}; } })() : (d.atsData || {}),
+      })));
     } catch (e) {
       console.error(e);
     }
@@ -127,26 +130,27 @@ export default function AdminDashboard() {
     a.click();
   };
 
-  // Structured CSV export for Resumes — exactly: Name, Mobile, Email, Role, Industry, Date, Score, Resume URL
   const exportResumesCSV = (data) => {
     if (!data?.length) return;
     const headers = [
       "Name",
       "Mobile No",
       "Email",
-      "Role",
-      "Industry",
+      "Target Role",
+      "Company",
+      "Pay Scale",
       "Date",
       "ATS Score",
-      "Resume URL",
+      "Resume PDF",
     ];
-    const rows = data.map((r) =>
-      [
+    const rows = data.map((r) => {
+      const fields = [
         r.userName || "",
         r.userMobile || "",
         r.userEmail || "",
         r.targetRole || "",
-        r.industry || "",
+        r.company || "",
+        r.payScale || "",
         r.createdAt
           ? new Date(r.createdAt).toLocaleDateString("en-IN", {
               day: "2-digit",
@@ -155,16 +159,22 @@ export default function AdminDashboard() {
             })
           : "",
         r.overallScore != null ? `${r.overallScore}%` : "",
-        r.fileUrl || "",
-      ]
-        .map((v) => `"${v.toString().replace(/"/g, '""')}"`)
-        .join(","),
-    );
+      ].map((v) => `"${v.toString().replace(/"/g, '""')}"`);
+
+      // Excel HYPERLINK formula — renders as clickable "View PDF" link in Excel/Sheets
+      const pdfCell = r.fileUrl
+        ? `"=HYPERLINK(""${r.fileUrl}"",""View PDF"")"`
+        : `""`;
+
+      return [...fields, pdfCell].join(",");
+    });
     const csv = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const a = document.createElement("a");
-    a.href = `data:text/csv;charset=utf-8,${encodeURI(csv)}`;
+    a.href = URL.createObjectURL(blob);
     a.download = "resumes_export.csv";
     a.click();
+    URL.revokeObjectURL(a.href);
   };
 
   // Chart helpers
@@ -801,8 +811,9 @@ export default function AdminDashboard() {
                           <th>Name</th>
                           <th>Mobile No</th>
                           <th>Email</th>
-                          <th>Role</th>
-                          <th>Industry</th>
+                          <th>Target Role</th>
+                          <th>Company</th>
+                          <th>Pay Scale</th>
                           <th>Date</th>
                           <th>Score</th>
                           <th>Resume</th>
@@ -811,77 +822,27 @@ export default function AdminDashboard() {
                       <tbody>
                         {fResumes.map((r) => (
                           <tr key={r.id}>
-                            <td
-                              style={{
-                                fontWeight: 600,
-                                color: "var(--text-1)",
-                                whiteSpace: "nowrap",
-                              }}
-                            >
-                              {r.userName}
+                            <td style={{ fontWeight: 600, color: "var(--text-1)", whiteSpace: "nowrap" }}>{r.userName}</td>
+                            <td style={{ color: "var(--text-3)", whiteSpace: "nowrap" }}>
+                              {r.userMobile || <span style={{ color: "var(--text-4)" }}>—</span>}
                             </td>
-                            <td
-                              style={{
-                                color: "var(--text-3)",
-                                whiteSpace: "nowrap",
-                              }}
-                            >
-                              {r.userMobile || (
-                                <span style={{ color: "var(--text-4)" }}>
-                                  —
-                                </span>
-                              )}
-                            </td>
-                            <td style={{ color: "var(--text-3)" }}>
-                              {r.userEmail}
-                            </td>
-                            <td>
-                              {r.targetRole || (
-                                <span style={{ color: "var(--text-4)" }}>
-                                  —
-                                </span>
-                              )}
-                            </td>
-                            <td>
-                              {r.industry || (
-                                <span style={{ color: "var(--text-4)" }}>
-                                  —
-                                </span>
-                              )}
-                            </td>
+                            <td style={{ color: "var(--text-3)" }}>{r.userEmail}</td>
+                            <td>{r.targetRole || <span style={{ color: "var(--text-4)" }}>—</span>}</td>
+                            <td>{r.company || <span style={{ color: "var(--text-4)" }}>—</span>}</td>
+                            <td>{r.payScale || <span style={{ color: "var(--text-4)" }}>—</span>}</td>
                             <td style={{ whiteSpace: "nowrap" }}>
-                              {new Date(r.createdAt).toLocaleDateString(
-                                "en-IN",
-                                {
-                                  day: "2-digit",
-                                  month: "short",
-                                  year: "numeric",
-                                },
-                              )}
+                              {new Date(r.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
                             </td>
                             <td>
-                              <span
-                                className={`badge ${r.overallScore >= 75 ? "badge-success" : r.overallScore >= 50 ? "badge-warning" : "badge-danger"}`}
-                              >
+                              <span className={`badge ${r.overallScore >= 75 ? "badge-success" : r.overallScore >= 50 ? "badge-warning" : "badge-danger"}`}>
                                 {r.overallScore}%
                               </span>
                             </td>
                             <td>
                               {r.fileUrl ? (
-                                <a
-                                  href={`${import.meta.env.VITE_API_URL}/api/pdf-proxy?url=${encodeURIComponent(r.fileUrl)}`}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="btn btn-ghost btn-sm"
-                                  style={{ textDecoration: "none" }}
-                                >
-                                  View PDF ↗
-                                </a>
-                              ) : (
-                                <span style={{ color: "var(--text-4)" }}>
-                                  —
-                                </span>
-                              )}
+                                <a href={r.fileUrl}
+                                  target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm" style={{ textDecoration: "none" }}>View PDF ↗</a>
+                              ) : <span style={{ color: "var(--text-4)" }}>—</span>}
                             </td>
                           </tr>
                         ))}
