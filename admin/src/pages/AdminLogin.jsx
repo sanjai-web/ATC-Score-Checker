@@ -4,12 +4,10 @@ import { useNavigate } from 'react-router-dom';
 const ADMIN_USERNAME = 'admin';
 const ADMIN_PASSWORD = 'admin';
 
+import logoImg from '../assets/image.png';
+
 const TechVedhuLogo = ({ size = 36 }) => (
-  <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M20 4C20 4 8 10 8 22C8 28 12 33 18 35L20 28L22 35C28 33 32 28 32 22C32 10 20 4 20 4Z" fill="white" opacity="0.9"/>
-    <path d="M20 4C20 4 14 14 16 22L20 18L24 22C26 14 20 4 20 4Z" fill="white"/>
-    <circle cx="17" cy="14" r="1.5" fill="#1a3b82"/>
-  </svg>
+  <img src={logoImg} alt="Logo" style={{ width: size, height: size, objectFit: 'contain', borderRadius: 6 }} />
 );
 
 export default function AdminLogin() {

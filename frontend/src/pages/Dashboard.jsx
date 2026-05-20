@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { account, databases, DB_ID, USERS_COL, RESUMES_COL, ID, Query } from '../appwrite';
 import axios from 'axios';
+import logoImg from '../assets/image.png';
 
 function ScoreRing({ score, size = 96, stroke = 8, color = '#4f46e5', label }) {
   const r = (size - stroke) / 2;
@@ -325,8 +326,8 @@ export default function Dashboard({ user, setUser }) {
       {/* ─── Navbar ─── */}
       <nav className="navbar">
         <div className="container navbar-inner">
-          <Link to="/" className="navbar-logo" style={{ textDecoration: 'none', color: 'var(--text-1)' }}>
-            <div className="navbar-logo-icon">A</div>
+          <Link to="/" className="navbar-logo" style={{ textDecoration: 'none', color: 'var(--text-1)', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <img src={logoImg} alt="Logo" style={{ width: 38, height: 38, objectFit: 'contain', borderRadius: 8 }} />
             <span>ATS Checker <span style={{ color: 'var(--accent)' }}>Pro</span></span>
           </Link>
           <div className="navbar-actions">

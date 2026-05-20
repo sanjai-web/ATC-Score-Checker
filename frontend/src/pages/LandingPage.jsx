@@ -1,13 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import logoImg from '../assets/image.png';
 
 const Logo = ({ size = 36 }) => (
-  <div style={{ width: size, height: size, borderRadius: 10, background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 20px rgba(99,102,241,0.4)', flexShrink: 0 }}>
-    <svg width={size * 0.6} height={size * 0.6} viewBox="0 0 24 24" fill="none">
-      <path d="M12 2L4 7v5c0 5.25 3.5 10.15 8 11.35C16.5 22.15 20 17.25 20 12V7L12 2z" fill="white" opacity="0.9"/>
-      <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  </div>
+  <img src={logoImg} alt="Logo" style={{ width: size, height: size, objectFit: 'contain', borderRadius: 8, flexShrink: 0 }} />
 );
 
 const features = [
