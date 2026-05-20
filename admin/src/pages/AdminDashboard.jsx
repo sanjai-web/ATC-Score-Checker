@@ -64,6 +64,7 @@ function CustomTooltip({ active, payload, label }) {
 
 export default function AdminDashboard() {
   const [active, setActive] = useState("overview");
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [users, setUsers] = useState([]);
   const [resumes, setResumes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -238,8 +239,16 @@ export default function AdminDashboard() {
     <div
       style={{ display: "flex", minHeight: "100vh", background: "var(--bg)" }}
     >
+      {/* ─── Mobile Overlay ─── */}
+      {mobileOpen && (
+        <div 
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 998 }} 
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
       {/* ─── Sidebar ─── */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${mobileOpen ? "open" : ""}`}>
         <div className="sidebar-logo">
           <div className="logo-icon">
             <TechVedhuLogo size={30} />
@@ -340,6 +349,11 @@ export default function AdminDashboard() {
 
       {/* ─── Main ─── */}
       <main className="admin-main">
+        {/* Mobile Header */}
+        <div className="mobile-header">
+          <div style={{ fontWeight: 800, fontSize: "1rem" }}>Admin Panel</div>
+          <button className="btn btn-ghost" onClick={() => setMobileOpen(true)}>☰ Menu</button>
+        </div>
         {loading ? (
           <div
             style={{
@@ -452,13 +466,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Charts Row */}
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "1.6fr 1fr",
-                    gap: 20,
-                  }}
-                >
+                <div className="grid-layout-charts">
                   <div className="card card-p">
                     <div style={{ marginBottom: 20 }}>
                       <h2 className="t-h2" style={{ marginBottom: 2 }}>

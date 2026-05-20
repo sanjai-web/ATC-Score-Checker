@@ -122,7 +122,7 @@ export default function LandingPage() {
               <div style={{ flex: 1, textAlign: 'center', fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-3)' }}>Tech Vedhu ATS — Dashboard Preview</div>
             </div>
             {/* Scores Grid */}
-            <div style={{ padding: 32, background: 'var(--bg)', display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
+            <div className="grid-cols-3" style={{ padding: 32, background: 'var(--bg)' }}>
               {[
                 { label: 'ATS Score', value: 84, color: '#10b981', icon: '🏆' },
                 { label: 'Keyword Match', value: 71, color: '#6366f1', icon: '🎯' },
@@ -153,7 +153,7 @@ export default function LandingPage() {
 
       {/* ── Stats ── */}
       <section style={{ padding: '60px 0', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
-        <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0 }}>
+        <div className="container grid-cols-4" style={{ gap: 0 }}>
           {[
             { value: 50, suffix: '+', label: 'Resumes Analyzed' },
             { value: 98, suffix: '%', label: 'ATS Accuracy Rate' },

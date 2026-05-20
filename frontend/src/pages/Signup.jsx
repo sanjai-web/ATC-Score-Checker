@@ -105,7 +105,7 @@ export default function Signup({ setUser }) {
             {error && <div className="alert alert-error">⚠ {error}</div>}
 
             <form onSubmit={handleSubmit}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div className="grid-cols-2">
                 <div className="form-group">
                   <label className="form-label">Full Name</label>
                   <input className="form-control" name="name" required placeholder="John Doe" value={form.name} onChange={set} />
@@ -149,7 +149,7 @@ export default function Signup({ setUser }) {
             </form>
 
             {/* Benefits */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginTop: 24 }}>
+            <div className="grid-cols-2" style={{ marginTop: 24, gap: 8 }}>
               {['Free forever', 'No credit card', 'Instant results', 'Secure & private'].map((b, i) => (
                 <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.78rem', color: 'var(--text-4)' }}>
                   <span style={{ color: 'var(--success)' }}>✓</span> {b}

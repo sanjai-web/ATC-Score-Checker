@@ -32,10 +32,10 @@ export default function AdminLogin() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex' }}>
+    <div className="split-screen">
 
       {/* ─── Left Accent Panel ─── */}
-      <div style={{ width: 420, flexShrink: 0, background: 'var(--navy)', padding: '56px 48px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative', overflow: 'hidden' }}>
+      <div className="hide-mobile" style={{ background: 'var(--navy)', padding: '56px 48px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', width: 320, height: 320, borderRadius: '50%', background: 'rgba(255,255,255,0.05)', top: -80, right: -60, pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', width: 200, height: 200, borderRadius: '50%', background: 'rgba(255,255,255,0.04)', bottom: 60, left: -60, pointerEvents: 'none' }} />
 
@@ -73,7 +73,7 @@ export default function AdminLogin() {
       </div>
 
       {/* ─── Right Form Panel ─── */}
-      <div className="anim-fade-in" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 40px' }}>
+      <div className="anim-fade-in" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '48px 40px' }}>
         <div style={{ width: '100%', maxWidth: 400 }}>
           <div style={{ marginBottom: 36 }}>
             <h2 style={{ fontSize: '1.6rem', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: 6, color: 'var(--text-1)' }}>Sign in to Admin</h2>

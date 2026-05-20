@@ -34,10 +34,10 @@ export default function Login({ setUser }) {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '1fr 1fr', background: 'var(--bg)' }}>
+    <div className="split-screen">
 
       {/* ── Left Panel ── */}
-      <div style={{ position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '48px 56px', background: 'linear-gradient(145deg, #4f46e5 0%, #7c3aed 100%)' }}>
+      <div className="hide-mobile" style={{ position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '48px 56px', background: 'linear-gradient(145deg, #4f46e5 0%, #7c3aed 100%)' }}>
         {/* BG orbs */}
         <div className="hero-orb" style={{ width: 500, height: 500, background: '#6366f1', top: -180, left: -120 }} />
         <div className="hero-orb" style={{ width: 300, height: 300, background: '#8b5cf6', bottom: -80, right: -60, opacity: 0.3 }} />

@@ -354,7 +354,7 @@ export default function Dashboard({ user, setUser }) {
 
         {/* ─── Upload Tab ─── */}
         {tab === 'upload' && (
-          <div className="anim-fade-up" style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.5fr)', gap: 24 }}>
+          <div className="anim-fade-up grid-layout-main">
 
             {/* Drop Zone Card */}
             <div>
@@ -402,7 +402,7 @@ export default function Dashboard({ user, setUser }) {
               <h2 className="t-h3" style={{ marginBottom: 4 }}>Analysis Options</h2>
               <p className="t-sm" style={{ marginBottom: 24 }}>Optional fields — adding them significantly improves accuracy.</p>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div className="grid-cols-2">
                 <div className="form-group">
                   <label className="form-label">Target Role</label>
                   <input className="form-control" name="targetRole" placeholder="e.g. Software Engineer" value={fields.targetRole} onChange={setField} />
@@ -413,7 +413,7 @@ export default function Dashboard({ user, setUser }) {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              <div className="grid-cols-2">
                 <div className="form-group">
                   <label className="form-label">Expected Pay Scale</label>
                   <input className="form-control" name="payScale" placeholder="e.g. ₹8–12 LPA" value={fields.payScale} onChange={setField} />
@@ -533,7 +533,7 @@ export default function Dashboard({ user, setUser }) {
                 )}
 
                 {/* Skills & Suggestions Row */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+                <div className="grid-cols-2">
                   <div className="card card-p">
                     <h3 className="t-h3" style={{ marginBottom: 4 }}>Missing Skills & Keywords</h3>
                     <p className="t-sm" style={{ marginBottom: 16 }}>Add these to improve your keyword match score.</p>

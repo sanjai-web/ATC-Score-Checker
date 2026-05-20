@@ -422,7 +422,21 @@ select.form-control option { background: #ffffff; color: var(--text-1); }
 }
 .card:hover .feat-icon { background: var(--gradient); box-shadow: var(--shadow-glow-sm); }
 
-/* ─── Responsive ─── */
+/* ─── Responsive Utilities ─── */
+.split-screen { display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; background: var(--bg); }
+.grid-cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-cols-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.grid-cols-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.grid-layout-main { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.5fr); gap: 24px; }
+.hide-mobile { display: block; }
+
+@media (max-width: 992px) {
+  .grid-layout-main { grid-template-columns: 1fr; gap: 16px; }
+  .split-screen { grid-template-columns: 1fr; }
+  .grid-cols-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-cols-3 { grid-template-columns: 1fr; }
+}
+
 @media (max-width: 768px) {
   .container     { padding-inline: 16px; }
   .section       { padding: 64px 0; }
@@ -430,4 +444,11 @@ select.form-control option { background: #ffffff; color: var(--text-1); }
   .sidebar       { display: none; }
   .card-p-lg     { padding: 24px; }
   .btn-xl        { padding: 14px 28px; }
+  
+  .grid-cols-4, .grid-cols-3, .grid-cols-2 { grid-template-columns: 1fr; }
+  .hide-mobile { display: none !important; }
+  .t-hero { font-size: 2.5rem; }
+  .t-h1 { font-size: 2rem; }
+  .navbar-actions span { display: none; }
+  .hero-orb { display: none; } /* Better performance on mobile */
 }
