@@ -59,7 +59,7 @@ export default function LandingPage() {
       <header style={{ position: 'sticky', top: 0, zIndex: 999, height: 68, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(20px)', borderBottom: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)', display: 'flex', alignItems: 'center' }}>
         <div className="container navbar-inner">
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <Logo size={38} />
+            <Logo size={48} />
             <div>
               <div style={{ fontWeight: 800, fontSize: '1rem', letterSpacing: '0.04em', color: 'var(--text-1)' }}>TECH VEDHU</div>
               <div style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--accent)', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: -2 }}>ATS Checker</div>

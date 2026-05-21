@@ -26,7 +26,7 @@ function ScoreRing({ score, size = 96, stroke = 8, color = '#4f46e5', label }) {
 
 const scoreColor = s => s >= 75 ? '#059669' : s >= 50 ? '#d97706' : '#dc2626';
 
-export default function Dashboard({ user, setUser }) {
+function Dashboard({ user, setUser }) {
   const navigate = useNavigate();
   const [tab, setTab] = useState('upload');
   const [file, setFile] = useState(null);
@@ -45,7 +45,6 @@ export default function Dashboard({ user, setUser }) {
 
   useEffect(() => {
     if (!user) return;
-    // Fetch user mobile from DB
     databases.getDocument(DB_ID, USERS_COL, user.$id)
       .then(doc => setUserMobile(doc.mobile || ''))
       .catch(() => {});
@@ -80,7 +79,7 @@ export default function Dashboard({ user, setUser }) {
     if (!file) return alert('Please select a PDF resume to analyze.');
     if (!user) return alert('You must be logged in to analyze a resume.');
     setLoading(true); setResult(null);
-    setShowAd(true); // ← show ad popup
+    setShowAd(true);
     try {
       setStatusText('Parsing resume...');
       const fd = new FormData();
@@ -117,8 +116,8 @@ export default function Dashboard({ user, setUser }) {
       const saved = await databases.createDocument(DB_ID, RESUMES_COL, ID.unique(), docData);
       setResult({ ...docData, id: saved.$id, atsData: data.data });
       fetchHistory();
-      setShowAd(false);      // ← close ad
-      setShowReality(true);  // ← show reality check popup (results load after dismiss)
+      setShowAd(false);
+      setShowReality(true);
     } catch(err) {
       console.error(err);
       setShowAd(false);
@@ -128,7 +127,6 @@ export default function Dashboard({ user, setUser }) {
     setLoading(false); setStatusText('');
   };
 
-  /* ── helpers for Reality Check ── */
   const getRating = s => s >= 80 ? { face:'😄', label:'Good', color:'#16a34a' }
     : s >= 60 ? { face:'😐', label:'Medium', color:'#d97706' }
     : s >= 40 ? { face:'😟', label:'Poor', color:'#ea580c' }
@@ -193,7 +191,6 @@ export default function Dashboard({ user, setUser }) {
                   {statusText || 'Analyzing your resume with AI…'}
                 </span>
               </div>
-              {/* Animated progress bar */}
               <div style={{ marginTop: 10, height: 3, background: 'rgba(255,255,255,0.1)', borderRadius: 99, overflow: 'hidden' }}>
                 <div style={{
                   height: '100%', borderRadius: 99,
@@ -327,7 +324,7 @@ export default function Dashboard({ user, setUser }) {
       <nav className="navbar">
         <div className="container navbar-inner">
           <Link to="/" className="navbar-logo" style={{ textDecoration: 'none', color: 'var(--text-1)', display: 'flex', alignItems: 'center', gap: 10 }}>
-            <img src={logoImg} alt="Logo" style={{ width: 38, height: 38, objectFit: 'contain', borderRadius: 8 }} />
+            <img src={logoImg} alt="Logo" style={{ width: 48, height: 48, objectFit: 'contain', borderRadius: 8 }} />
             <span>ATS Checker <span style={{ color: 'var(--accent)' }}>Pro</span></span>
           </Link>
           <div className="navbar-actions">
@@ -400,37 +397,35 @@ export default function Dashboard({ user, setUser }) {
             {/* Options Form */}
             <form className="card card-p" onSubmit={handleAnalyze}>
               <h2 className="t-h3" style={{ marginBottom: 4 }}>Analysis Options</h2>
-              <p className="t-sm" style={{ marginBottom: 24 }}>Optional fields — adding them significantly improves accuracy.</p>
+              <p className="t-sm" style={{ marginBottom: 24 }}>Mandatory fields — Please fill all the details for accurate analysis.</p>
 
               <div className="grid-cols-2">
                 <div className="form-group">
                   <label className="form-label">Target Role</label>
-                  <input className="form-control" name="targetRole" placeholder="e.g. Software Engineer" value={fields.targetRole} onChange={setField} />
+                  <input className="form-control" name="targetRole" placeholder="e.g. Software Engineer" value={fields.targetRole} onChange={setField} required />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Company Name</label>
-                  <input className="form-control" name="company" placeholder="e.g. Google, Amazon" value={fields.company} onChange={setField} />
+                  <input className="form-control" name="company" placeholder="e.g. Google, Amazon" value={fields.company} onChange={setField} required />
                 </div>
               </div>
 
               <div className="grid-cols-2">
                 <div className="form-group">
                   <label className="form-label">Expected Pay Scale</label>
-                  <input className="form-control" name="payScale" placeholder="e.g. ₹8–12 LPA" value={fields.payScale} onChange={setField} />
+                  <input className="form-control" name="payScale" placeholder="e.g. ₹8–12 LPA" value={fields.payScale} onChange={setField} required />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Experience Level</label>
-                  <select className="form-control" name="experienceLevel" value={fields.experienceLevel} onChange={setField}>
+                  <select className="form-control" name="experienceLevel" value={fields.experienceLevel} onChange={setField} required>
                     {['Entry-Level','Mid-Level','Senior','Executive'].map(l => <option key={l}>{l}</option>)}
                   </select>
                 </div>
               </div>
 
-
-
               <div className="form-group" style={{ marginBottom: 28 }}>
                 <label className="form-label">Job Description</label>
-                <textarea className="form-control" name="jobDescription" rows={6} placeholder="Paste the full job description here for the most accurate keyword matching..." value={fields.jobDescription} onChange={setField} />
+                <textarea className="form-control" name="jobDescription" rows={6} placeholder="Paste the full job description here for the most accurate keyword matching..." value={fields.jobDescription} onChange={setField} required />
               </div>
 
               <button type="submit" className="btn btn-primary btn-lg btn-block" disabled={loading || !file}>
@@ -582,29 +577,35 @@ export default function Dashboard({ user, setUser }) {
                   </div>
                 )}
 
-                {/* ─── Ad Banner at bottom of Results (1:1 Ratio, Small Container) ─── */}
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
+                {/* ─── Ad Banner — portrait video, no cropping ─── */}
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10, marginBottom: 10 }}>
                   <div style={{
                     width: '100%',
-                    maxWidth: '300px',
-                    aspectRatio: '1/1',
+                    maxWidth: '220px',
+                    position: 'relative',
                     borderRadius: 16,
                     overflow: 'hidden',
-                    position: 'relative',
                     border: '1px solid rgba(99,102,241,0.2)',
-                    boxShadow: 'var(--shadow-sm)'
+                    boxShadow: 'var(--shadow-sm)',
+                    background: '#000',
                   }}>
+                    {/* Subtle sponsored label */}
                     <div style={{
-                      position: 'absolute', top: 10, left: 12, zIndex: 2,
-                      background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)',
-                      padding: '2px 10px', borderRadius: 20,
-                      fontSize: '0.65rem', fontWeight: 700, color: 'rgba(255,255,255,0.65)',
-                      letterSpacing: '0.08em', textTransform: 'uppercase',
+                      position: 'absolute', top: 7, left: 9, zIndex: 2,
+                      background: 'rgba(0,0,0,0.45)',
+                      padding: '1px 7px', borderRadius: 20,
+                      fontSize: '0.58rem', fontWeight: 600,
+                      color: 'rgba(255,255,255,0.5)',
+                      letterSpacing: '0.06em', textTransform: 'uppercase',
                     }}>Sponsored</div>
                     <video
                       src="/1779108389699.mp4"
                       autoPlay loop muted playsInline
-                      style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }}
+                      style={{
+                        width: '100%',
+                        display: 'block',
+                        objectFit: 'contain',   /* full video visible, no cropping */
+                      }}
                     />
                   </div>
                 </div>
@@ -686,3 +687,5 @@ export default function Dashboard({ user, setUser }) {
     </div>
   );
 }
+
+export default Dashboard;
