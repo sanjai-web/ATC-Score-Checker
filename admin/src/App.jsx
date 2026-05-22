@@ -10,7 +10,7 @@ function App() {
   return (
     <div className="App bg-light min-vh-100">
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/" element={<Navigate to="/dashboard" />} />
         <Route path="/login" element={!isAdmin() ? <AdminLogin /> : <Navigate to="/dashboard" />} />
         <Route path="/dashboard" element={isAdmin() ? <AdminDashboard /> : <Navigate to="/login" />} />
       </Routes>
