@@ -180,7 +180,7 @@ function Dashboard({ user, setUser }) {
               loop
               muted
               playsInline
-              style={{ width: '100%', display: 'block', maxHeight: 320, objectFit: 'cover' }}
+              style={{ width: '100%', display: 'block', height: 'auto', maxHeight: '75vh' }}
             />
 
             {/* Bottom status bar */}
@@ -280,7 +280,7 @@ function Dashboard({ user, setUser }) {
                 )}
 
                 {/* Pay scale reality */}
-                {payInfo && (
+                {/* {payInfo && (
                   <div style={{ background:'rgba(100,116,139,0.12)', border:'1px solid rgba(100,116,139,0.25)', borderRadius:12, padding:'14px 16px' }}>
                     <div style={{ fontSize:'0.72rem', fontWeight:700, color:'#94a3b8', letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:8 }}>💸 Pay Scale Reality</div>
                     <div style={{ display:'flex', alignItems:'center', gap:16, flexWrap:'wrap' }}>
@@ -298,7 +298,7 @@ function Dashboard({ user, setUser }) {
                       </p>
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
 
               {/* Footer CTA */}
@@ -450,7 +450,8 @@ function Dashboard({ user, setUser }) {
                 <button className="btn btn-primary" onClick={() => setTab('upload')}>Go to Upload</button>
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 20, flex: '1 1 600px', minWidth: 0 }}>
 
                 {/* Score Summary */}
                 <div className="card card-p">
@@ -577,11 +578,21 @@ function Dashboard({ user, setUser }) {
                   </div>
                 )}
 
-                {/* ─── Ad Banner — portrait video, no cropping ─── */}
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10, marginBottom: 10 }}>
+                </div>
+
+                {/* ─── Ad Banner (Right Side) ─── */}
+                <div style={{ 
+                  flex: '1 1 250px', 
+                  maxWidth: '300px', 
+                  width: '100%', 
+                  position: 'sticky', 
+                  top: '24px', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  gap: 16 
+                }}>
                   <div style={{
                     width: '100%',
-                    maxWidth: '220px',
                     position: 'relative',
                     borderRadius: 16,
                     overflow: 'hidden',
@@ -604,7 +615,7 @@ function Dashboard({ user, setUser }) {
                       style={{
                         width: '100%',
                         display: 'block',
-                        objectFit: 'contain',   /* full video visible, no cropping */
+                        height: 'auto'
                       }}
                     />
                   </div>
