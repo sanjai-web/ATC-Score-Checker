@@ -69,6 +69,7 @@ export default function AdminDashboard() {
   const [resumes, setResumes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [userSort, setUserSort] = useState("newest");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -222,12 +223,29 @@ export default function AdminDashboard() {
   }));
 
   const filtered = search.trim().toLowerCase();
+
+  const resumeCounts = resumes.reduce((acc, r) => {
+    const key = r.userId || r.uid;
+    if (key) {
+      acc[key] = (acc[key] || 0) + 1;
+    }
+    return acc;
+  }, {});
+
   const fUsers = users.filter(
     (u) =>
       !filtered ||
       u.name?.toLowerCase().includes(filtered) ||
       u.email?.toLowerCase().includes(filtered),
-  );
+  ).sort((a, b) => {
+    if (userSort === "frequent") {
+      const countA = resumeCounts[a.id || a.uid] || 0;
+      const countB = resumeCounts[b.id || b.uid] || 0;
+      if (countB !== countA) return countB - countA;
+    }
+    return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+  });
+
   const fResumes = enrichedResumes.filter(
     (r) =>
       !filtered ||
@@ -675,6 +693,15 @@ export default function AdminDashboard() {
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                     />
+                    <select
+                      className="form-control"
+                      style={{ height: 38, width: 140 }}
+                      value={userSort}
+                      onChange={(e) => setUserSort(e.target.value)}
+                    >
+                      <option value="newest">Newest First</option>
+                      <option value="frequent">Frequent Users</option>
+                    </select>
                     <button
                       className="btn btn-primary btn-sm"
                       onClick={() => exportCSV(users, "users_export.csv")}
@@ -691,6 +718,7 @@ export default function AdminDashboard() {
                           <th>Name</th>
                           <th>Email</th>
                           <th>Mobile</th>
+                          <th>Submissions</th>
                           <th>Registered On</th>
                         </tr>
                       </thead>
@@ -739,6 +767,11 @@ export default function AdminDashboard() {
                                   —
                                 </span>
                               )}
+                            </td>
+                            <td>
+                              <span className="badge" style={{ background: "rgba(26, 86, 219, 0.1)", color: "#1a56db", padding: "4px 8px", borderRadius: 6, fontWeight: 700 }}>
+                                {resumeCounts[u.id || u.uid] || 0}
+                              </span>
                             </td>
                             <td>
                               {new Date(u.createdAt).toLocaleDateString(
