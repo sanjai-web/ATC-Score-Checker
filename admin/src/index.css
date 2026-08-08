@@ -141,3 +141,16 @@ a { color: inherit; text-decoration: none; }
   .mobile-header { display: flex; position: fixed; top: 0; left: 0; right: 0; height: 60px; background: var(--card); border-bottom: 1px solid var(--border); z-index: 900; align-items: center; padding: 0 20px; justify-content: space-between; box-shadow: var(--shadow-sm); }
   .hide-mobile { display: none !important; }
 }
+
+/* ─── Admin Mobile Responsive Overrides ─── */
+@media (max-width: 576px) {
+  .t-h1 { font-size: 1.25rem !important; }
+  .t-h2 { font-size: 1rem !important; }
+  .t-body, .t-sm, .form-label, .form-control, button, .btn { font-size: 0.8rem !important; }
+  .data-table th { font-size: 0.62rem !important; padding: 8px 10px !important; }
+  .data-table td { font-size: 0.76rem !important; padding: 10px 10px !important; }
+  .card-p { padding: 14px !important; }
+  .stat-card { padding: 14px !important; }
+  .admin-main { padding: 14px !important; padding-top: 74px !important; }
+}
+

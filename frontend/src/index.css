@@ -452,3 +452,16 @@ select.form-control option { background: #ffffff; color: var(--text-1); }
   .navbar-actions span { display: none; }
   .hero-orb { display: none; } /* Better performance on mobile */
 }
+
+/* ─── Mobile Font Size Reductions & Padding Overrides ─── */
+@media (max-width: 576px) {
+  h1, .t-hero { font-size: 1.8rem !important; line-height: 1.2 !important; }
+  h2, .t-h1 { font-size: 1.35rem !important; line-height: 1.25 !important; }
+  h3, .t-h2 { font-size: 1.1rem !important; }
+  p, .t-body, .t-sm, .form-label, .form-control, button, .btn, select, textarea { font-size: 0.82rem !important; }
+  .t-xs { font-size: 0.72rem !important; }
+  .card-p, .card-p-lg { padding: 16px !important; }
+  .btn { padding: 10px 18px !important; }
+  .score-ring-wrap { transform: scale(0.85); }
+}
+

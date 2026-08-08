@@ -1,0 +1,31 @@
+datasource db {
+  provider = "postgresql" // Appwrite can be backed by PostgreSQL or MySQL, but Prisma supports many databases
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model ResumeScan {
+  id              String   @id @default(uuid()) // Corresponds to Appwrite document $id
+  userName        String   // Candidate's full name
+  userEmail       String   // Candidate's email address
+  userMobile      String?  // Candidate's mobile number
+  degree          String   // Candidate's highest degree
+  department      String   // Major / Department
+  college         String   // College / University name
+  graduationYear  String   // Year of graduation
+  currentStatus   String   // Current status (e.g. Student, Fresher, Working)
+  targetRole      String?  // Role targeted for ATS scan
+  company         String?  // Target company name
+  jobDescription  String?  @db.Text // Long text for pasted Job Description
+  fileName        String   // Uploaded PDF file name
+  fileUrl         String   // Uploaded PDF public URL
+  storageProvider String   @default("appwrite") // Storage backend indicator
+  overallScore    Int      // Blended ATS score (0 - 100)
+  atsData         String   @db.Text // Stringified JSON holding detailed Groq AI analysis & breakdown
+  createdAt       DateTime @default(now()) // Date of scanner execution
+
+  @@map("resumes") // Maps to Appwrite's resumes collection
+}

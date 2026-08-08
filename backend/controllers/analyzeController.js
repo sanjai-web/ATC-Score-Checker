@@ -1,6 +1,6 @@
 const pdfParse = require('pdf-parse');
 const { Groq } = require('groq-sdk');
-const { Client, Storage, ID } = require('node-appwrite');
+const { Client, Storage, Databases, ID } = require('node-appwrite');
 const { InputFile } = require('node-appwrite/file');
 
 // ─── Appwrite Storage Client (server-side) ────────────────────────────────────
@@ -10,6 +10,8 @@ const appwriteClient = new Client()
     .setKey(process.env.APPWRITE_API_KEY);         // Server API Key
 
 const appwriteStorage = new Storage(appwriteClient);
+const appwriteDatabases = new Databases(appwriteClient);
+
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
@@ -197,7 +199,21 @@ const analyzeResume = async (req, res) => {
     try {
         if (!req.file) return res.status(400).json({ error: 'No resume file uploaded' });
 
-        const { jobDescription, targetRole, company, payScale, experienceLevel } = req.body;
+        const {
+            fullName,
+            mobile,
+            email,
+            degree,
+            department,
+            college,
+            graduationYear,
+            currentStatus,
+            targetRole,
+            company,
+            jobDescription,
+            payScale,
+            experienceLevel
+        } = req.body;
 
         // 1. Parse PDF
         const pdfData = await pdfParse(req.file.buffer);
@@ -237,7 +253,7 @@ Return ONLY a raw JSON object (no markdown, no backticks) with exactly this stru
 
         const chatCompletion = await groq.chat.completions.create({
             messages: [{ role: 'user', content: prompt }],
-            model: 'llama-3.3-70b-versatile',
+            model: process.env.GROQ_MODEL || 'llama-3.3-70b-versatile',
             temperature: 0.1,
         });
 
@@ -257,10 +273,50 @@ Return ONLY a raw JSON object (no markdown, no backticks) with exactly this stru
         const algoMissing = jobDescription ? extractSkills(jobDescription).filter(s => !resumeSkills.includes(s)) : [];
         const allMissing  = [...new Set([...algoMissing, ...aiMissing])].slice(0, 12);
 
+        // 7. Save to Appwrite Database
+        const docData = {
+            userName: fullName || 'Anonymous',
+            userEmail: email || '',
+            userMobile: mobile || '',
+            degree: degree || '',
+            department: department || '',
+            college: college || '',
+            graduationYear: graduationYear || '',
+            currentStatus: currentStatus || '',
+            targetRole: targetRole || '',
+            company: company || '',
+            jobDescription: jobDescription || '',
+            fileName: safeName,
+            fileUrl,
+            storageProvider: 'appwrite',
+            overallScore: finalScore,
+            createdAt: new Date().toISOString(),
+            atsData: JSON.stringify({
+                overallScore:        finalScore,
+                algoScore,
+                aiScore,
+                scoreBreakdown:      breakdown,
+                readabilityScore:    Math.max(0, Math.min(100, Number(aiResult.readabilityScore) || 70)),
+                keywordMatchScore:   breakdown.keywordMatch,
+                missingSkills:       allMissing,
+                sectionAnalysis:     aiResult.sectionAnalysis || {},
+                suggestions:         Array.isArray(aiResult.suggestions) ? aiResult.suggestions : [],
+                roleRecommendations: Array.isArray(aiResult.roleRecommendations) ? aiResult.roleRecommendations : [],
+            }),
+        };
+
+        const saved = await appwriteDatabases.createDocument(
+            process.env.APPWRITE_DB_ID,
+            process.env.APPWRITE_RESUMES_COL,
+            ID.unique(),
+            docData
+        );
+
         res.json({
             success: true,
             fileUrl,
             fileId,
+            id: saved.$id,
             data: {
                 overallScore:        finalScore,
                 algoScore,

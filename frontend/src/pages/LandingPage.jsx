@@ -72,8 +72,7 @@ export default function LandingPage() {
             ))}
           </nav>
           <div style={{ display: 'flex', gap: 10 }}>
-            <button className="btn-outline-white" onClick={() => navigate('/login')}>Sign in</button>
-            <button className="btn btn-primary btn-sm" onClick={() => navigate('/signup')}>Get Started Free</button>
+            <button className="btn btn-primary btn-sm" onClick={() => navigate('/scan')}>Start ATS Scan</button>
           </div>
         </div>
       </header>
@@ -98,11 +97,8 @@ export default function LandingPage() {
           </p>
 
           <div className="anim-fade-up-3" style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
-            <button className="btn btn-primary btn-xl" onClick={() => navigate('/signup')}>
-              ⚡ Analyze My Resume Free
-            </button>
-            <button className="btn btn-secondary btn-xl" onClick={() => navigate('/login')}>
-              Sign in to Dashboard
+            <button className="btn btn-primary btn-xl" onClick={() => navigate('/scan')}>
+              ⚡ Start ATS Scan
             </button>
           </div>
 
@@ -259,11 +255,8 @@ export default function LandingPage() {
             Join thousands of job seekers who've used Tech Vedhu ATS to land more interviews and better jobs.
           </p>
           <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <button className="btn btn-primary btn-xl" onClick={() => navigate('/signup')}>
-              Get Started Free — It's Instant →
-            </button>
-            <button className="btn btn-secondary btn-xl" onClick={() => navigate('/login')}>
-              Already a member?
+            <button className="btn btn-primary btn-xl" onClick={() => navigate('/scan')}>
+              Start ATS Scan — It's Free & Instant →
             </button>
           </div>
         </div>
