@@ -65,7 +65,7 @@ export default function LandingPage() {
               <div style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--accent)', letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: -2 }}>ATS Checker</div>
             </div>
           </div>
-          <nav style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+          <nav className="hide-mobile" style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
             {[['#features','Features'],['#how-it-works','How it works'],['#testimonials','Reviews']].map(([href, label]) => (
               <a key={href} href={href} style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--text-3)', transition: 'color 0.2s' }}
                 onMouseEnter={e => e.target.style.color = 'var(--text-1)'} onMouseLeave={e => e.target.style.color = 'var(--text-3)'}>{label}</a>
@@ -156,7 +156,7 @@ export default function LandingPage() {
             { value: 3, suffix: '×', label: 'More Interview Calls' },
             { value: 30, suffix: 's', label: 'Average Analysis Time' },
           ].map((s, i) => (
-            <div key={i} style={{ textAlign: 'center', padding: '24px', borderRight: i < 3 ? '1px solid var(--border)' : 'none' }}>
+            <div key={i} className="stat-col">
               <div className="t-gradient" style={{ fontSize: '2.4rem', fontWeight: 900, letterSpacing: '-0.03em', lineHeight: 1 }}>
                 <AnimatedCounter target={s.value} suffix={s.suffix} />
               </div>

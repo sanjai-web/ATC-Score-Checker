@@ -430,38 +430,96 @@ select.form-control option { background: #ffffff; color: var(--text-1); }
 .grid-layout-main { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.5fr); gap: 24px; }
 .hide-mobile { display: block; }
 
-@media (max-width: 992px) {
-  .grid-layout-main { grid-template-columns: 1fr; gap: 16px; }
-  .split-screen { grid-template-columns: 1fr; }
-  .grid-cols-4 { grid-template-columns: repeat(2, 1fr); }
-  .grid-cols-3 { grid-template-columns: 1fr; }
+.stat-col {
+  text-align: center;
+  padding: 24px;
+  border-right: 1px solid var(--border);
 }
-
+.stat-col:last-child {
+  border-right: none;
+}
 @media (max-width: 768px) {
-  .container     { padding-inline: 16px; }
-  .section       { padding: 64px 0; }
-  .admin-content { margin-left: 0; padding: 20px; }
-  .sidebar       { display: none; }
-  .card-p-lg     { padding: 24px; }
-  .btn-xl        { padding: 14px 28px; }
-  
-  .grid-cols-4, .grid-cols-3, .grid-cols-2 { grid-template-columns: 1fr; }
-  .hide-mobile { display: none !important; }
-  .t-hero { font-size: 2.5rem; }
-  .t-h1 { font-size: 2rem; }
-  .navbar-actions span { display: none; }
-  .hero-orb { display: none; } /* Better performance on mobile */
+  .stat-col {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-col:last-child {
+    border-bottom: none;
+  }
 }
 
-/* ─── Mobile Font Size Reductions & Padding Overrides ─── */
-@media (max-width: 576px) {
-  h1, .t-hero { font-size: 1.8rem !important; line-height: 1.2 !important; }
-  h2, .t-h1 { font-size: 1.35rem !important; line-height: 1.25 !important; }
-  h3, .t-h2 { font-size: 1.1rem !important; }
-  p, .t-body, .t-sm, .form-label, .form-control, button, .btn, select, textarea { font-size: 0.82rem !important; }
-  .t-xs { font-size: 0.72rem !important; }
+
+/* ─── High-Fidelity Responsive System ─── */
+
+/* Desktop - Large (1920px & 1600px) */
+@media (min-width: 1600px) {
+  .container { max-width: 1440px; }
+  .t-hero { font-size: 4.2rem !important; }
+}
+
+/* Desktop - Standard (1440px) */
+@media (min-width: 1367px) and (max-width: 1440px) {
+  .container { max-width: 1220px; }
+  .t-hero { font-size: 3.6rem !important; }
+}
+
+/* Desktop - Small Laptop (1366px) */
+@media (min-width: 1025px) and (max-width: 1366px) {
+  .container { max-width: 1140px; }
+  .t-hero { font-size: 3.2rem !important; }
+  .section { padding: 80px 0; }
+}
+
+/* Tablet - Large / Landscape (1024px) */
+@media (max-width: 1024px) {
+  .container { max-width: 940px; padding-inline: 20px; }
+  .grid-cols-4 { grid-template-columns: repeat(3, 1fr); }
+  .section { padding: 64px 0; }
+  .grid-layout-main { grid-template-columns: 1fr; gap: 20px; }
+}
+
+/* Tablet - Portrait (768px) */
+@media (max-width: 768px) {
+  .container { max-width: 720px; padding-inline: 16px; }
+  .split-screen { grid-template-columns: 1fr; }
+  .grid-cols-4, .grid-cols-3, .grid-cols-2 { grid-template-columns: 1fr; }
+  [style*="gridColumn"], [style*="grid-column"] { grid-column: auto !important; }
+  .hide-mobile { display: none !important; }
+  .navbar nav { display: none !important; }
+  .t-hero { font-size: 2.4rem !important; }
+  .t-h1 { font-size: 1.8rem !important; }
+  .hero-orb { display: none !important; }
+}
+
+/* Mobile - Large (480px) */
+@media (max-width: 480px) {
+  .container { padding-inline: 14px; }
+  .section { padding: 48px 0; }
+  .card-p, .card-p-lg { padding: 20px !important; }
+  .btn-xl { padding: 12px 24px !important; font-size: 0.9rem !important; }
+  .t-hero { font-size: 2rem !important; }
+  .t-h1 { font-size: 1.5rem !important; }
+  .grid-cols-4, .grid-cols-3, .grid-cols-2 { gap: 12px; }
+}
+
+/* Mobile - Medium (390px) */
+@media (max-width: 390px) {
+  .container { padding-inline: 12px; }
+  .t-hero { font-size: 1.8rem !important; }
+  .t-h1 { font-size: 1.35rem !important; }
+  .t-h2 { font-size: 1.15rem !important; }
+  .t-body, .t-sm, .form-label, .form-control, button, .btn, select, textarea { font-size: 0.82rem !important; }
   .card-p, .card-p-lg { padding: 16px !important; }
-  .btn { padding: 10px 18px !important; }
+  .btn { padding: 10px 16px !important; }
+}
+
+/* Mobile - Small (360px) */
+@media (max-width: 360px) {
+  .container { padding-inline: 10px; }
+  .t-hero { font-size: 1.65rem !important; }
+  .t-h1 { font-size: 1.25rem !important; }
+  .t-body, .t-sm, .form-label, .form-control, button, .btn, select, textarea { font-size: 0.8rem !important; }
+  .card-p, .card-p-lg { padding: 12px !important; }
   .score-ring-wrap { transform: scale(0.85); }
 }
 
